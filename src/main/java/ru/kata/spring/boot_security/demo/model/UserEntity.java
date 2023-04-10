@@ -1,86 +1,83 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
+@Table(name = "users")
 @NoArgsConstructor
-public class User implements UserDetails {
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Long id;
 
-    @NonNull
-    @Column(name = "login", unique = true, nullable = false)
-    private String login;
+    @Column(name = "username", unique = true)
+    @NotNull
+    private String username;
 
     @Column(name = "password")
-    @NonNull
+    @NotNull
     private String password;
 
     @Column(name = "first_name")
+    @NotNull
     private String firstName;
 
     @Column(name = "second_name")
+    @NotNull
     private String secondName;
 
-
-    public User(@NonNull String login, @NonNull String password) {
-        this.login = login;
-        this.password = password;
-    }
-
-    public User(@NonNull String login, @NonNull String password, String firstName, String secondName) {
-        this.login = login;
+    public UserEntity(String username, String password, String firstName, String secondName) {
+        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.secondName = secondName;
     }
 
-    public User(Long id, @NonNull String login, @NonNull String password, String firstName, String secondName) {
-        this.id = id;
-        this.login = login;
+    public UserEntity(String username, String password, String firstName, String secondName, List<Role> roles) {
+        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.secondName = secondName;
+        this.roles = roles;
     }
 
-    @ManyToOne(cascade = {CascadeType.MERGE,
-            CascadeType.PERSIST
-    })
+    @ManyToMany(cascade =
+            {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Role role;
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getNameRole()))
+                .collect(Collectors.toList());
     }
 
-    @NonNull
+    @Override
     public String getPassword() {
         return password;
     }
 
     @Override
     public String getUsername() {
-        return login;
+        return username;
     }
 
     @Override
@@ -103,4 +100,14 @@ public class User implements UserDetails {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                '}';
+    }
 }

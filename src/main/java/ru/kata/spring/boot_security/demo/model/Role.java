@@ -1,29 +1,41 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity()
+@Entity
 @Table(name = "roles")
-@NoArgsConstructor
 @Getter
 @Setter
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "name_role", unique = true, nullable = false)
+    @NonNull
+    private String nameRole;
 
-    public Role(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public Role() {
     }
 
+    public Role(String nameRole) {
+        this.nameRole = nameRole;
+    }
+
+    public Role(Long id, String nameRole) {
+        this.id = id;
+        this.nameRole = nameRole;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", nameRole='" + nameRole + '\'' +
+                '}';
+    }
 }

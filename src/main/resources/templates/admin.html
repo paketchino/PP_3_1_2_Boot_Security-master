@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <form th:method="POST" th:action="@{/logout}">
+        <input type="submit" value="Выход"/>
+    </form>
+</head>
+<body>
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">First Name</th>
+            <th scope="col">Username</th>
+            <th scope="col">Second Name</th>
+            <th scope="col">Password</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.getFirstName()}"></td>
+            <td>
+                <a class="dark" th:href="@{|/admin/updateUser?id=${user.getId()}|}"
+                   th:text="${user.getUsername()}">
+                </a>
+            </td>
+            <td th:text="${user.getSecondName()}"></td>
+            <td th:text="${user.password}"></td>
+        </tr>
+        <a th:href="@{|/admin/addUser|}">
+            <button type="submit" name="submit_button" value="main_button">
+                Add User
+            </button>
+        </a>
+        <a th:href="@{|/admin/regAdmin|}">
+            <button type="submit" name="submit_button" value="main_button">
+                Add User with Admin
+            </button>
+        </a>
+        <a th:href="@{|/admin/addRole|}">
+            <button type="submit" name="submit_button" value="main_button">
+                Add Role for only Admin
+            </button>
+        </a>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
