@@ -5,13 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import javax.validation.constraints.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -26,33 +25,36 @@ public class UserEntity implements UserDetails {
     private Long id;
 
     @Column(name = "username", unique = true)
-    @NotNull
+    @Email
+    @NotBlank(message = "Username is mandatory")
     private String username;
 
     @Column(name = "password")
     @NotNull
+    @Size(min = 5, max = 15)
     private String password;
 
     @Column(name = "first_name")
     @NotNull
+    @Size(min = 3, max = 10)
     private String firstName;
 
     @Column(name = "second_name")
     @NotNull
+    @Size(min = 5, max = 15)
     private String secondName;
 
-    public UserEntity(String username, String password, String firstName, String secondName) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.secondName = secondName;
-    }
+    @Column(name = "age")
+    @NotNull
+    @Min(18)
+    private byte age;
 
-    public UserEntity(String username, String password, String firstName, String secondName, List<Role> roles) {
+    public UserEntity(String username, String password, String firstName, String secondName, byte age, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.secondName = secondName;
+        this.age = age;
         this.roles = roles;
     }
 
@@ -61,13 +63,17 @@ public class UserEntity implements UserDetails {
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getNameRole()))
                 .collect(Collectors.toList());
+    }
+
+    public String roleName() {
+        return roles.stream().findFirst().orElseThrow().getNameRole();
     }
 
     @Override
@@ -98,6 +104,27 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserEntity that = (UserEntity) o;
+        return age == that.age && Objects.equals(id, that.id)
+                && Objects.equals(username, that.username)
+                && Objects.equals(password, that.password)
+                && Objects.equals(firstName, that.firstName)
+                && Objects.equals(secondName, that.secondName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, firstName, secondName, age);
     }
 
     @Override

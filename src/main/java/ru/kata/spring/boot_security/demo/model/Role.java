@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
@@ -29,6 +30,24 @@ public class Role {
     public Role(Long id, String nameRole) {
         this.id = id;
         this.nameRole = nameRole;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Role role = (Role) o;
+        return Objects.equals(id, role.id)
+                && nameRole.equals(role.nameRole);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nameRole);
     }
 
     @Override

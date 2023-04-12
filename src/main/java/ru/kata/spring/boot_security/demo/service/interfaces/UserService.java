@@ -1,9 +1,11 @@
 package ru.kata.spring.boot_security.demo.service.interfaces;
 
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserService {
 
@@ -11,12 +13,9 @@ public interface UserService {
 
     Optional<UserEntity> findById(Long id);
 
-    UserEntity save(UserEntity user);
-
-    void delete(UserEntity user);
+    UserEntity save(UserEntity user, Set<Role> roles);
 
     Optional<UserEntity> findUserByUsername(String username);
 
-    UserEntity saveAdmin(UserEntity user);
-
+    void delete(Long id);
 }

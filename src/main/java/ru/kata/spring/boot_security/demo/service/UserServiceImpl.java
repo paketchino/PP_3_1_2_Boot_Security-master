@@ -12,6 +12,7 @@ import ru.kata.spring.boot_security.demo.service.interfaces.UserService;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,34 +39,21 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserEntity save(UserEntity user) {
-        Optional<Role> role_user = roleRepository.findByRole("ROLE_USER");
-        if (role_user.isEmpty()) {
-            throw new RoleException("Role by id not found");
+    public UserEntity save(UserEntity user, Set<Role> roles) {
+        Optional<Role> byId = roleRepository.findById(roles.stream().findFirst().orElseThrow().getId());
+        if (byId.isEmpty()) {
+            throw new RoleException("Role is Empty");
         }
-        List<Role> roles = List.of(role_user.get());
-        user.setRoles(roles);
+        Role role = byId.get();
+        user.setRoles(Set.of(role));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Transactional
     @Override
-    public UserEntity saveAdmin(UserEntity user) {
-        Optional<Role> role_admin = roleRepository.findByRole("ROLE_ADMIN");
-        if (role_admin.isEmpty()) {
-            throw new RoleException("Role by id not found");
-        }
-        List<Role> roles = List.of(role_admin.get());
-        user.setRoles(roles);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    @Override
-    public void delete(UserEntity user) {
-        userRepository.delete(user);
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 
     @Override

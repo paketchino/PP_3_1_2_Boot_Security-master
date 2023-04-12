@@ -7,8 +7,7 @@ import ru.kata.spring.boot_security.demo.dao.RoleRepository;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.UserEntity;
 import ru.kata.spring.boot_security.demo.service.interfaces.UserService;
-
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class PreStart implements ApplicationListener<ContextRefreshedEvent> {
@@ -33,17 +32,19 @@ public class PreStart implements ApplicationListener<ContextRefreshedEvent> {
         if (!roleRepository.findByNameRole(user.getNameRole()).isPresent()) {
             roleRepository.save(user);
         }
-        List<Role> role1 = List.of(admin);
-        List<Role> role2 = List.of(user);
+        Set<Role> role1 = Set.of(admin);
+        Set<Role> role2 = Set.of(user);
+        byte age1 = (byte) 20;
+        byte age2 = (byte) 26;
         UserEntity adminUser =
-                new UserEntity("admin", "password", "Vadim" ,"Vadimov", role1);
+                new UserEntity("admin@mail.ru", "password", "Vadim" ,"Vadimov", age1, role1);
         if (!userService.findUserByUsername(adminUser.getUsername()).isPresent()) {
-            userService.saveAdmin(adminUser);
+            userService.save(adminUser, role1);
         }
         UserEntity userEntity =
-                new UserEntity("user", "12345", "Stas", "Stasov", role2);
+                new UserEntity("user@gmail.com", "12345", "Stas", "Stasov", age2, role2);
         if (!userService.findUserByUsername(adminUser.getUsername()).isPresent()) {
-            userService.save(userEntity);
+            userService.save(userEntity, role2);
         }
 
     }
