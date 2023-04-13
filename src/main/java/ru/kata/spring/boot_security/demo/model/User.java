@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @Setter
 @Table(name = "users")
 @NoArgsConstructor
-public class UserEntity implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +48,7 @@ public class UserEntity implements UserDetails {
     @Min(18)
     private byte age;
 
-    public UserEntity(String username, String password, String firstName, String secondName, byte age, Set<Role> roles) {
+    public User(String username, String password, String firstName, String secondName, byte age, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -114,7 +113,7 @@ public class UserEntity implements UserDetails {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        UserEntity that = (UserEntity) o;
+        User that = (User) o;
         return age == that.age && Objects.equals(id, that.id)
                 && Objects.equals(username, that.username)
                 && Objects.equals(password, that.password)
@@ -129,7 +128,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String toString() {
-        return "UserEntity{" +
+        return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +

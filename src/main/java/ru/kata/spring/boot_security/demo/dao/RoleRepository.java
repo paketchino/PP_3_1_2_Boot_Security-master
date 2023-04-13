@@ -19,9 +19,6 @@ public interface RoleRepository extends CrudRepository<Role, Long> {
     @Query("from Role as r where r.nameRole = :role")
     Optional<Role> findByRole(@Param("role") String role);
 
-    @Modifying
-    Role save(Role role);
-
     @Query("from Role")
     List<Role> getAllRole();
 

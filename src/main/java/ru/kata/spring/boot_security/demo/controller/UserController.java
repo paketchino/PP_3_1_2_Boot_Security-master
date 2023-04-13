@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.exception.MyUserNotFoundException;
 import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.UserEntity;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.interfaces.RoleService;
 import ru.kata.spring.boot_security.demo.service.interfaces.UserService;
 import javax.validation.Valid;
@@ -28,9 +28,10 @@ public class UserController {
         if (userService.findUserByUsername(principal.getName()).isEmpty()) {
             throw new MyUserNotFoundException("User not found exception");
         }
-        model.addAttribute("edit_user", new UserEntity());
+        model.addAttribute("new_role", new Role());
+        model.addAttribute("edit_user", new User());
         model.addAttribute("roles", roleService.getAllRole());
-        model.addAttribute("new_user", new UserEntity());
+        model.addAttribute("new_user", new User());
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("auth", userService.findUserByUsername(principal.getName()).get());
         return "admin";
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/addUser")
-    public String postAddUser(@ModelAttribute UserEntity new_user,
+    public String postAddUser(@ModelAttribute User new_user,
                               @RequestParam("rol") Set<Role> roles) {
         userService.save(new_user, roles);
         return "redirect:/admin";
@@ -59,7 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/updateUser")
-    public String postUpdateUser(@ModelAttribute @Valid UserEntity user,
+    public String postUpdateUser(@ModelAttribute @Valid User user,
                                  @RequestParam("rol") Set<Role> roles) {
         userService.save(user, roles);
         return "redirect:/admin";

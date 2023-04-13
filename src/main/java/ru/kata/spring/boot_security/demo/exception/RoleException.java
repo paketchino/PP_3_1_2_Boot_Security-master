@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.exception;
 
-public class RoleException extends RuntimeException{
+public class RoleException extends RuntimeException {
+
     public RoleException() {
     }
 

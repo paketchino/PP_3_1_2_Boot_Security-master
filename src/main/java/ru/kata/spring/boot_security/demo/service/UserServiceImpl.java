@@ -6,7 +6,7 @@ import ru.kata.spring.boot_security.demo.dao.RoleRepository;
 import ru.kata.spring.boot_security.demo.dao.UserRepository;
 import ru.kata.spring.boot_security.demo.exception.RoleException;
 import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.UserEntity;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.interfaces.UserService;
 
 import javax.transaction.Transactional;
@@ -28,18 +28,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getAllUsers() {
+    public List<User> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
     @Override
-    public Optional<UserEntity> findById(Long id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
     @Transactional
     @Override
-    public UserEntity save(UserEntity user, Set<Role> roles) {
+    public User save(User user, Set<Role> roles) {
         Optional<Role> byId = roleRepository.findById(roles.stream().findFirst().orElseThrow().getId());
         if (byId.isEmpty()) {
             throw new RoleException("Role is Empty");
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserEntity> findUserByUsername(String username) {
+    public Optional<User> findUserByUsername(String username) {
         return userRepository.findUserByUsername(username);
     }
 }
